@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Village API Admin Dashboard</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #163b88, #2563eb);
+            color: white;
+            padding: 28px 45px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 30px;
+        }
+
+        .header p {
+            margin: 8px 0 0;
+            color: #dbeafe;
+        }
+
+        .container {
+            padding: 35px 45px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 22px;
+        }
+
+        .card {
+            background: white;
+            padding: 24px;
+            border-radius: 14px;
+            box-shadow: 0 0 14px rgba(0,0,0,0.08);
+            border-left: 6px solid #2563eb;
+        }
+
+        .card h3 {
+            margin: 0;
+            color: #555;
+            font-size: 15px;
+        }
+
+        .card .number {
+            margin-top: 12px;
+            font-size: 33px;
+            font-weight: bold;
+            color: #163b88;
+        }
+
+        .section {
+            margin-top: 35px;
+            background: white;
+            padding: 28px;
+            border-radius: 14px;
+            box-shadow: 0 0 14px rgba(0,0,0,0.08);
+        }
+
+        .section h2 {
+            margin-top: 0;
+            color: #163b88;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 18px;
+        }
+
+        th, td {
+            padding: 14px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #eef3ff;
+            color: #163b88;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 6px 12px;
+            background: #dcfce7;
+            color: #166534;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .loading {
+            text-align: center;
+            font-size: 18px;
+            color: #555;
+            margin-top: 50px;
+        }
+
+        .footer-note {
+            margin-top: 25px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        @media (max-width: 1000px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>All India Villages API - Admin Dashboard</h1>
+    <p>Monitor data coverage, API users, API keys, and usage logs</p>
+</div>
+
+<div class="container">
+
+    <div id="loading" class="loading">Loading dashboard data...</div>
+
+    <div id="dashboard" style="display:none;">
+
+        <div class="cards">
+            <div class="card">
+                <h3>Total Countries</h3>
+                <div class="number" id="countries">0</div>
+            </div>
+
+            <div class="card">
+                <h3>Total States</h3>
+                <div class="number" id="states">0</div>
+            </div>
+
+            <div class="card">
+                <h3>Total Districts</h3>
+                <div class="number" id="districts">0</div>
+            </div>
+
+            <div class="card">
+                <h3>Total Sub-Districts</h3>
+                <div class="number" id="subdistricts">0</div>
+            </div>
+
+            <div class="card">
+                <h3>Total Villages</h3>
+                <div class="number" id="villages">0</div>
+            </div>
+
+            <div class="card">
+                <h3>Total Users</h3>
+                <div class="number" id="users">0</div>
+            </div>
+
+            <div class="card">
+                <h3>API Keys</h3>
+                <div class="number" id="apiKeys">0</div>
+            </div>
+
+            <div class="card">
+                <h3>API Logs</h3>
+                <div class="number" id="apiLogs">0</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Project Module Status</h2>
+
+            <table>
+                <tr>
+                    <th>Module</th>
+                    <th>Status</th>
+                    <th>Description</th>
+                </tr>
+
+                <tr>
+                    <td>Data Cleaning</td>
+                    <td><span class="status">Completed</span></td>
+                    <td>Excel and ODS files cleaned using Python and converted into structured CSV files.</td>
+                </tr>
+
+                <tr>
+                    <td>Database</td>
+                    <td><span class="status">Completed</span></td>
+                    <td>SQLite database created with countries, states, districts, subdistricts, villages, users, API keys, and logs.</td>
+                </tr>
+
+                <tr>
+                    <td>Backend API</td>
+                    <td><span class="status">Completed</span></td>
+                    <td>Flask REST API created with API key authentication and village search endpoints.</td>
+                </tr>
+
+                <tr>
+                    <td>Demo Client</td>
+                    <td><span class="status">Completed</span></td>
+                    <td>Village autocomplete form created with automatic address filling.</td>
+                </tr>
+
+                <tr>
+                    <td>Admin Dashboard</td>
+                    <td><span class="status">Completed</span></td>
+                    <td>Admin statistics dashboard created to monitor project data and API usage.</td>
+                </tr>
+            </table>
+
+            <p class="footer-note">
+                This dashboard fetches live statistics from the backend API endpoint:
+                <b>/api/v1/admin/stats</b>
+            </p>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    const API_URL = "http://127.0.0.1:5000/api/v1/admin/stats?api_key=ak_demo_123456789";
+
+    async function loadDashboard() {
+        try {
+            const response = await fetch(API_URL);
+            const result = await response.json();
+
+            if (result.success) {
+                const data = result.data;
+
+                document.getElementById("countries").innerText = data.totalCountries;
+                document.getElementById("states").innerText = data.totalStates;
+                document.getElementById("districts").innerText = data.totalDistricts;
+                document.getElementById("subdistricts").innerText = data.totalSubdistricts.toLocaleString();
+                document.getElementById("villages").innerText = data.totalVillages.toLocaleString();
+                document.getElementById("users").innerText = data.totalUsers;
+                document.getElementById("apiKeys").innerText = data.totalApiKeys;
+                document.getElementById("apiLogs").innerText = data.totalApiLogs;
+
+                document.getElementById("loading").style.display = "none";
+                document.getElementById("dashboard").style.display = "block";
+            } else {
+                document.getElementById("loading").innerText = "Failed to load dashboard data.";
+            }
+
+        } catch (error) {
+            document.getElementById("loading").innerText = "API connection error. Please check backend server.";
+            console.error(error);
+        }
+    }
+
+    loadDashboard();
+</script>
+
+</body>
+</html>

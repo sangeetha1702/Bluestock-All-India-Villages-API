@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>All India Villages API Demo</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 650px;
+            margin: 35px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 14px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.12);
+        }
+
+        h1 {
+            text-align: center;
+            color: #163b88;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #555;
+            margin-bottom: 25px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 14px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 11px;
+            margin-top: 6px;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        input[readonly] {
+            background: #f8f8f8;
+        }
+
+        textarea {
+            height: 85px;
+            resize: vertical;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 22px;
+            padding: 13px;
+            background: #1f3c88;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #162d66;
+        }
+
+        .suggestions {
+            border: 1px solid #ccc;
+            background: white;
+            max-height: 180px;
+            overflow-y: auto;
+            margin-top: 5px;
+            border-radius: 6px;
+        }
+
+        .suggestion-item {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+        }
+
+        .suggestion-item:hover {
+            background: #eef3ff;
+        }
+
+        .success-screen {
+            display: none;
+            text-align: center;
+            padding: 35px 20px;
+        }
+
+        .success-icon {
+            width: 70px;
+            height: 70px;
+            background: #22c55e;
+            color: white;
+            border-radius: 50%;
+            font-size: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 18px;
+        }
+
+        .success-screen h2 {
+            color: #166534;
+            margin-bottom: 10px;
+        }
+
+        .success-screen p {
+            color: #555;
+            font-size: 15px;
+        }
+
+        .address-box {
+            background: #f0fff4;
+            border: 1px solid #22c55e;
+            color: #14532d;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: left;
+            line-height: 1.6;
+        }
+
+        .secondary-btn {
+            background: #6b7280;
+            margin-top: 20px;
+        }
+
+        .secondary-btn:hover {
+            background: #4b5563;
+        }
+
+        .error-text {
+            display: none;
+            color: red;
+            margin-top: 8px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div id="formScreen">
+        <h1>All India Villages API Demo</h1>
+        <p class="subtitle">Village autocomplete and address auto-fill demo</p>
+
+        <form id="contactForm">
+            <label>Full Name</label>
+            <input type="text" id="fullName" placeholder="Enter full name" required>
+
+            <label>Email Address</label>
+            <input type="email" id="email" placeholder="Enter email address" required>
+
+            <label>Phone Number</label>
+            <input type="text" id="phone" placeholder="Enter phone number" required>
+
+            <label>Village / Area Name</label>
+            <input type="text" id="villageInput" placeholder="Type village name, example: Manibeli" required>
+            <div id="suggestions" class="suggestions"></div>
+            <div id="villageError" class="error-text">Please select a village from suggestions.</div>
+
+            <label>Sub-District</label>
+            <input type="text" id="subDistrict" readonly>
+
+            <label>District</label>
+            <input type="text" id="district" readonly>
+
+            <label>State</label>
+            <input type="text" id="state" readonly>
+
+            <label>Country</label>
+            <input type="text" id="country" value="India" readonly>
+
+            <label>Message</label>
+            <textarea id="message" placeholder="Enter message" required></textarea>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <div id="successScreen" class="success-screen">
+        <div class="success-icon">✓</div>
+        <h2>Form Submitted Successfully!</h2>
+        <p>Your address has been standardized using All India Villages API.</p>
+
+        <div class="address-box">
+            <strong>Submitted Address:</strong>
+            <div id="submittedAddress"></div>
+        </div>
+
+        <button class="secondary-btn" onclick="submitAnother()">Submit Another Response</button>
+    </div>
+
+</div>
+
+<script>
+    const API_URL = "http://127.0.0.1:5000/api/v1/search";
+    const API_KEY = "ak_demo_123456789";
+
+    const villageInput = document.getElementById("villageInput");
+    const suggestionsBox = document.getElementById("suggestions");
+    const villageError = document.getElementById("villageError");
+
+    let selectedVillage = null;
+
+    villageInput.addEventListener("input", async function () {
+        const query = villageInput.value.trim();
+        selectedVillage = null;
+
+        document.getElementById("subDistrict").value = "";
+        document.getElementById("district").value = "";
+        document.getElementById("state").value = "";
+        document.getElementById("country").value = "India";
+        villageError.style.display = "none";
+
+        if (query.length < 2) {
+            suggestionsBox.innerHTML = "";
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_URL}?q=${query}&limit=10`, {
+                method: "GET",
+                headers: {
+                    "X-API-Key": API_KEY
+                }
+            });
+
+            const result = await response.json();
+            suggestionsBox.innerHTML = "";
+
+            if (result.success && result.data.length > 0) {
+                result.data.forEach(item => {
+                    const div = document.createElement("div");
+                    div.className = "suggestion-item";
+                    div.innerText = item.fullAddress;
+
+                    div.onclick = function () {
+                        selectedVillage = item;
+
+                        villageInput.value = item.hierarchy.village;
+                        document.getElementById("subDistrict").value = item.hierarchy.subDistrict;
+                        document.getElementById("district").value = item.hierarchy.district;
+                        document.getElementById("state").value = item.hierarchy.state;
+                        document.getElementById("country").value = item.hierarchy.country;
+
+                        suggestionsBox.innerHTML = "";
+                        villageError.style.display = "none";
+                    };
+
+                    suggestionsBox.appendChild(div);
+                });
+            } else {
+                suggestionsBox.innerHTML = "<div class='suggestion-item'>No village found</div>";
+            }
+
+        } catch (error) {
+            suggestionsBox.innerHTML = "<div class='suggestion-item'>API connection error</div>";
+            console.error(error);
+        }
+    });
+
+    document.getElementById("contactForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        if (!selectedVillage) {
+            villageError.style.display = "block";
+            return;
+        }
+
+        const fullAddress =
+            selectedVillage.hierarchy.village + ", " +
+            selectedVillage.hierarchy.subDistrict + ", " +
+            selectedVillage.hierarchy.district + ", " +
+            selectedVillage.hierarchy.state + ", " +
+            selectedVillage.hierarchy.country;
+
+        document.getElementById("submittedAddress").innerHTML = fullAddress;
+
+        document.getElementById("formScreen").style.display = "none";
+        document.getElementById("successScreen").style.display = "block";
+    });
+
+    function submitAnother() {
+        document.getElementById("contactForm").reset();
+        document.getElementById("country").value = "India";
+        selectedVillage = null;
+        suggestionsBox.innerHTML = "";
+        villageError.style.display = "none";
+
+        document.getElementById("successScreen").style.display = "none";
+        document.getElementById("formScreen").style.display = "block";
+    }
+</script>
+
+</body>
+</html>

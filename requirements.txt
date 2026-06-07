@@ -1,6 +1,0 @@
-pandas
-xlrd
-openpyxl
-odfpy
-flask
-flask-cors

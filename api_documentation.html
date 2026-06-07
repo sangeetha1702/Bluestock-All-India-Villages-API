@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>All India Villages API Documentation</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            margin: 0;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #163b88, #2563eb);
+            color: white;
+            padding: 30px 45px;
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .header p {
+            margin-top: 8px;
+            color: #dbeafe;
+        }
+
+        .container {
+            padding: 35px 45px;
+        }
+
+        .section {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 0 14px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+
+        h2 {
+            color: #163b88;
+            margin-top: 0;
+        }
+
+        code {
+            background: #eef3ff;
+            padding: 4px 7px;
+            border-radius: 5px;
+            color: #163b88;
+            font-weight: bold;
+        }
+
+        .endpoint {
+            border-left: 5px solid #2563eb;
+            padding: 15px;
+            margin-top: 15px;
+            background: #f8fbff;
+            border-radius: 8px;
+        }
+
+        .method {
+            display: inline-block;
+            background: #22c55e;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        pre {
+            background: #111827;
+            color: #e5e7eb;
+            padding: 18px;
+            border-radius: 10px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 13px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #eef3ff;
+            color: #163b88;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>All India Villages API Documentation</h1>
+    <p>REST API documentation for village search, dropdowns, and address autocomplete</p>
+</div>
+
+<div class="container">
+
+    <div class="section">
+        <h2>Base URL</h2>
+        <p>Local API Base URL:</p>
+        <code>http://127.0.0.1:5000/api/v1</code>
+    </div>
+
+    <div class="section">
+        <h2>Authentication</h2>
+        <p>All protected APIs require an API key.</p>
+
+        <p><b>Header:</b></p>
+        <pre>X-API-Key: ak_demo_123456789</pre>
+
+        <p><b>Browser Testing:</b></p>
+        <pre>?api_key=ak_demo_123456789</pre>
+    </div>
+
+    <div class="section">
+        <h2>Available Endpoints</h2>
+
+        <div class="endpoint">
+            <p><span class="method">GET</span><code>/states</code></p>
+            <p>Returns all available states.</p>
+            <pre>http://127.0.0.1:5000/api/v1/states?api_key=ak_demo_123456789</pre>
+        </div>
+
+        <div class="endpoint">
+            <p><span class="method">GET</span><code>/states/{state_code}/districts</code></p>
+            <p>Returns districts for a selected state.</p>
+            <pre>http://127.0.0.1:5000/api/v1/states/27/districts?api_key=ak_demo_123456789</pre>
+        </div>
+
+        <div class="endpoint">
+            <p><span class="method">GET</span><code>/districts/{district_code}/subdistricts</code></p>
+            <p>Returns sub-districts for a selected district.</p>
+            <pre>http://127.0.0.1:5000/api/v1/districts/497/subdistricts?state_code=27&api_key=ak_demo_123456789</pre>
+        </div>
+
+        <div class="endpoint">
+            <p><span class="method">GET</span><code>/search?q=Manibeli</code></p>
+            <p>Search villages by village name.</p>
+            <pre>http://127.0.0.1:5000/api/v1/search?q=Manibeli&api_key=ak_demo_123456789</pre>
+        </div>
+
+        <div class="endpoint">
+            <p><span class="method">GET</span><code>/autocomplete?q=Man</code></p>
+            <p>Returns autocomplete suggestions for village names.</p>
+            <pre>http://127.0.0.1:5000/api/v1/autocomplete?q=Man&api_key=ak_demo_123456789</pre>
+        </div>
+
+        <div class="endpoint">
+            <p><span class="method">GET</span><code>/admin/stats</code></p>
+            <p>Returns admin dashboard statistics.</p>
+            <pre>http://127.0.0.1:5000/api/v1/admin/stats?api_key=ak_demo_123456789</pre>
+        </div>
+
+    </div>
+
+    <div class="section">
+        <h2>Sample Response</h2>
+
+        <pre>{
+  "success": true,
+  "count": 1,
+  "data": [
+    {
+      "value": "525002",
+      "label": "Manibeli",
+      "fullAddress": "Manibeli, Akkalkuwa, Nandurbar, MAHARASHTRA, India",
+      "hierarchy": {
+        "village": "Manibeli",
+        "subDistrict": "Akkalkuwa",
+        "district": "Nandurbar",
+        "state": "MAHARASHTRA",
+        "country": "India"
+      }
+    }
+  ]
+}</pre>
+    </div>
+
+    <div class="section">
+        <h2>Project Data Coverage</h2>
+
+        <table>
+            <tr>
+                <th>Data Type</th>
+                <th>Total Count</th>
+            </tr>
+            <tr>
+                <td>Countries</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>States</td>
+                <td>30</td>
+            </tr>
+            <tr>
+                <td>Districts</td>
+                <td>586</td>
+            </tr>
+            <tr>
+                <td>Sub-Districts</td>
+                <td>5,764</td>
+            </tr>
+            <tr>
+                <td>Villages</td>
+                <td>619,246</td>
+            </tr>
+        </table>
+    </div>
+
+</div>
+
+</body>
+</html>

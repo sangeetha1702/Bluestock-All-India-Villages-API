@@ -1,0 +1,26 @@
+Bluestock_Village_API_Project/
+│
+├── backend/
+│   └── app.py
+│
+├── frontend/
+│   ├── index.html
+│   ├── admin_dashboard.html
+│   └── api_documentation.html
+│
+├── python_scripts/
+│   ├── 01_clean_village_data.py
+│   ├── 02_create_database.py
+│   └── 03_test_database.py
+│
+├── docs/
+│   ├── PROJECT_REPORT.md
+│   └── DEMO_VIDEO_SCRIPT.txt
+│
+├── database/
+│   └── village_api.db
+│
+├── README.md
+├── requirements.txt
+├── .gitignore
+└── PROJECT_STRUCTURE.txt

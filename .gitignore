@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# PyCharm
+.idea/
+
+# Database
+*.db
+
+# Large raw dataset files
+data/raw/
+data/cleaned/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
